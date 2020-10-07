@@ -11,6 +11,23 @@
 
 \usepackage{xcolor}
 
+\usepackage{enumerate}
+
+\usepackage{tikz}
+\usetikzlibrary{calc,fadings}
+\tikzfading[name=fade l,left color=transparent!100,right color=transparent!0]
+\tikzfading[name=fade r,right color=transparent!100,left color=transparent!0]
+\tikzfading[name=fade d,bottom color=transparent!100,top color=transparent!0]
+\tikzfading[name=fade u,top color=transparent!100,bottom color=transparent!0]
+
+% this "frames" a rectangle node
+\newcommand\framenode[2][10pt]{
+    \fill[white,path fading=fade u] (#2.south west) rectangle ($(#2.south east)+(0, #1)$);
+    \fill[white,path fading=fade d] (#2.north west) rectangle ($(#2.north east)+(0,-#1)$);
+    \fill[white,path fading=fade l] (#2.south east) rectangle ($(#2.north east)+(-#1,0)$);
+    \fill[white,path fading=fade r] (#2.south west) rectangle ($(#2.north west)+( #1,0)$);
+}
+
 \definecolor{commentsColor}{rgb}{0.497495, 0.497587, 0.497464}
 \definecolor{keywordsColor}{rgb}{0.000000, 0.000000, 0.635294}
 \definecolor{stringColor}{rgb}{0.558215, 0.000000, 0.135316}
@@ -95,7 +112,7 @@ EXPOSE 80
  \begin{frame}{Kubernetes}
   \begin{itemize}
    \item Container orchestration
-   \item Originally made by Google
+   \item Originates from Google
    \item Kubernetes $\rightarrow$ K + 8 letters + s $\rightarrow$ k8s (``Kates'')
   \end{itemize}
  \end{frame}
@@ -134,14 +151,88 @@ spec:
   \end{verbatim}
  \end{frame}
  
+  \begin{frame}[fragile]{Example}
+  \tiny
+  \begin{columns}
+   \column{0.4\textwidth}
+\begin{verbatim}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsw-client
+  labels:
+    name: dsw-client
+    type: prod
+  namespace: dc-dsw
+spec:
+  selector:
+    matchLabels:
+      name: dsw-client
+      type: prod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: dsw-client
+        type: prod
+        version: 2.5.0
+    spec:
+      containers:
+      - name: dsw-client
+        image: dsw/wizard-client:2.5.0
+        resources:
+          limits:
+            cpu: 600m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 40Mi
+    \end{verbatim}
+     \column{0.6\textwidth}
+  \begin{verbatim}
+        ports:
+          - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            scheme: HTTP
+            port: 80
+        volumeMounts:
+          - name: client-conf
+            mountPath: /src/scss/_variables.scss
+            subPath: _variables.scss
+          - name: client-conf
+            mountPath: /src/scss/_overrides.scss
+            subPath: _overrides.scss
+          - name: custom-assets
+            mountPath: /usr/share/nginx/html/assets
+        env:
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: prod-client
+                key: API_URL
+      volumes:
+        - name: client-conf
+          configMap:
+            name: prod-client
+        - name: custom-assets
+          configMap:
+            name: custom-assets
+
+  \end{verbatim}
+    \end{columns}
+
+ \end{frame}
+ 
  \begin{frame}{Namespace}
   \begin{itemize}
    \item Internal grouping
    \item DNS
    \begin{itemize}
-    \item \texttt{pod.namespace.svc.cluster-name.}
+    \item \texttt{<service>.<namespace>.svc.cluster.local}
    \end{itemize}
-   \item Access control
+   \item Access/resource control
   \end{itemize}
  \end{frame}
  
@@ -173,25 +264,42 @@ spec:
  % - delete deployment
  % - show it's gone
  
- \begin{frame}{ConfigMap and Secret}
-  
- \end{frame}
- 
  \begin{frame}{Volumes}
   \begin{itemize}
    \item Persistent storage
    \item \texttt{PersistentVolume}
    \begin{itemize}
     \item The storage itself (hd, nfs, ...)
+    \item Global
    \end{itemize}
    \item \texttt{PersistentVolumeClaim}
    \begin{itemize}
     \item The ``claim'' for storage used by the pod.
+    \item Namespaced
    \end{itemize}
    \item Allow setting up ``storage pools'' that are given to pods via claims
   \end{itemize}
  \end{frame}
 
+ \begin{frame}{Configuration Variables and Files}
+   \begin{itemize}
+    \item \texttt{Environment:}
+    \item ConfigMap
+    \item Secret
+    \begin{itemize}
+     \item Not encrypted
+     \item Base64
+    \end{itemize}
+    \item Use cases:
+    \begin{itemize}
+     \item Environment variables
+     \item Arguments
+     \item Files
+    \end{itemize}
+   \end{itemize}
+ 
+ \end{frame}
+ 
  \begin{frame}{Services}
   \centering
   \includegraphics[width=0.8\textwidth]{img/arch-ps.pdf}
@@ -217,7 +325,12 @@ spec:
  
  \begin{frame}{Ingress}
   \begin{itemize}
-   \item Http access
+   \item Http(s) access to containers
+   \item Certmanager
+   \begin{itemize}
+    \item Certification management
+    \item Integration with Let's Encrypt
+   \end{itemize}
    \item Interface
    \begin{itemize}
     \item No official implementation
@@ -273,7 +386,10 @@ spec:
 \begin{frame}
  \begin{columns}
   \column{0.35\textwidth}
-  \includegraphics[width=\textwidth]{img/creature.jpeg}
+   \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=\textwidth]{img/creature.jpeg}};
+    \framenode[3pt]{image} % opt. arg. is fade radius; mand. arg. is node name to frame
+\end{tikzpicture}
   \column{0.65\textwidth}
   {\Large \bf Linus Östberg}
   
@@ -281,11 +397,20 @@ spec:
 
   \vspace{20pt}
   
-  \begin{description}
-   \item[Github] \href{https://github.com/talavis}{talavis}
-   \item[Slack] \texttt{@lostb}
-  \end{description}
+  \begin{tabular}{cl}
+   \includegraphics[height=0.5cm]{img/github.pdf} & \href{https://github.com/talavis}{talavis} \\
+   \includegraphics[height=0.5cm]{img/slack.pdf} & \texttt{@lostb} \\
+  \end{tabular}
  \end{columns}
+ 
+ \vspace{50pt}
+ 
+ \begin{columns}
+ \column{0.55\textwidth}
+ {\tiny \url{https://github.com/talavis/coffee-k8s}}
+ \column{0.45\textwidth}
+  \includegraphics[height=0.8cm]{img/scilifelab-logo.pdf}
+  \end{columns}
 \end{frame}
 
 

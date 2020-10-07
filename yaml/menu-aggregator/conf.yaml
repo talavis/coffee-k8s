@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: menu-agg-conf
+  namespace: coffee-menu
+data:
+  api-url: /api

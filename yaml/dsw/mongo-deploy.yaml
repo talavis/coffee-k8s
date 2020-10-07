@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    name: mongo
+    type: db
+  namespace: coffee-dsw
+spec:
+  selector:
+    matchLabels:
+      name: mongo
+      type: db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mongo
+        type: db
+        version: 4.2.5
+    spec:
+      containers:
+        - name: dsw-db
+          image: mongo:4.2.5
+          resources:
+            limits:
+              cpu: 800m
+              memory: 500Mi
+            requests:
+              cpu: 500m
+              memory: 300Mi
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - mountPath: /data/db
+              name: dsw-mongo-storage
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: password
+      volumes:
+        - name: dsw-mongo-storage
+          persistentVolumeClaim:
+            claimName: dsw-mongo-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dsw-mongo
+  labels:
+    name: dsw-mongo
+  namespace: coffee-dsw
+spec:
+  ports:
+  - name: server
+    port: 27017
+  clusterIP: None
+  selector:
+    name: mongo

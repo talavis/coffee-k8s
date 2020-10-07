@@ -1,0 +1,3 @@
+username=rabbit
+password=rabbitpassword
+vhost=dsw-test

@@ -1,0 +1,30 @@
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    type: generated
+  annotations:
+    note: generated
+secretGenerator:
+  - name: rabbit-secret
+    namespace: coffee-dsw
+    env: conf/rabbit.txt
+  - name: mongo-secret
+    namespace: coffee-dsw
+    env: conf/mongo.txt
+configMapGenerator:
+  - name: test-server
+    namespace: coffee-dsw
+    files:
+      - conf/test-application.yml
+      - conf/test-integration.yml
+  - name: test-docworker
+    namespace: coffee-dsw
+    files:
+      - conf/test-docworker.yml
+  - name: custom-assets
+    namespace: coffee-dsw
+    files:
+      - conf/data-centre-logo-w.svg
+      - conf/elixir-aai-logo-for-button.svg
+      - conf/SciLifeLab_Symbol_Green.svg
+      - conf/SciLifeLab_Symbol_NEG.svg

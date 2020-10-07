@@ -1,0 +1,31 @@
+mongo:
+  host: dsw-mongo
+  port: 27017
+  database: dsw-test
+  collection: documents
+  fs_collection: documentFs
+  auth:
+    username: mongoadmin
+    password: mongopassword
+
+mq:
+  host: dsw-rabbit
+  port: 5672
+  vhost: dsw-test
+  queue: document.generation
+  auth: 
+    username: rabbit
+    password: rabbitpassword
+
+logging:
+  level: INFO
+
+externals:
+  pandoc:
+    executable: pandoc
+    args: --standalone
+    timeout:
+  wkhtmltopdf:
+    executable: wkhtmltopdf
+    args:
+    timeout:

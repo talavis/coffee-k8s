@@ -1,0 +1,108 @@
+---
+# rabbitmq
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: coffee-dsw
+spec:
+  selector:
+    matchLabels:
+      name: rabbitmq
+  serviceName: dsw-rabbit
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: rabbitmq
+        version: 3.8.9
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.8.9-management
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 800Mi
+          requests:
+            cpu: 1000m
+            memory: 500Mi
+        ports:
+        - containerPort: 5672
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-secret
+              key: username
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-secret
+              key: password
+        - name: RABBITMQ_DEFAULT_VHOST
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-secret
+              key: vhost
+        volumeMounts:
+          - mountPath: /var/lib/rabbitmq
+            name: dsw-rabbit-storage
+      volumes:
+        - name: dsw-rabbit-storage
+          persistentVolumeClaim:
+            claimName: dsw-rabbit-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dsw-rabbit
+  labels:
+    name: dsw-rabbit
+  namespace: coffee-dsw
+spec:
+  ports:
+  - name: server
+    port: 5672
+  clusterIP: None
+  selector:
+    name: rabbitmq
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    storage: coffee-dsw-rabbit
+  name: coffee-dsw-rabbit
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/storage/coffee-rabbit
+    server: 192.168.81.133
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dsw-rabbit-storage
+  labels:
+    storage: dsw-rabbit
+  namespace: coffee-dsw
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+    limits:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      storage: coffee-dsw-rabbit
+  storageClassName: ''

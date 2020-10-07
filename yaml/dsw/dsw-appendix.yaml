@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsw-appendix
+  labels:
+    name: dsw-appendix
+    type: docs
+  namespace: coffee-dsw
+spec:
+  selector:
+    matchLabels:
+      name: dsw-appendix
+      type: docs
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: dsw-appendix
+        type: docs
+        version: 20.05.29
+    spec:
+      containers:
+      - name: dsw-appendix
+        image: scilifelabdatacentre/dsw-appendix:latest
+        resources:
+          limits:
+            cpu: 300m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 40Mi
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            scheme: HTTP
+            port: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dsw-appendix
+  labels:
+    name: dsw-appendix
+  namespace: coffee-dsw
+spec:
+  ports:
+  - name: nginx
+    port: 80
+  selector:
+    type: docs
+    name: dsw-appendix

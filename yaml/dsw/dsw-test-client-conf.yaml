@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-client
+  namespace: coffee-dsw
+data:
+  _variables.scss: |
+    $primary: #491F53;
+    $illustrations-color: #A7C947;
+    $side-navigation-logo-url: url(/assets/SciLifeLab_Symbol_Green.svg);
+    $navbar-brand-logo-url: url(/assets/SciLifeLab_Symbol_Green.svg);
+  _overrides.scss: |
+    .elixir-logo {
+      content: url(/assets/elixir-aai-logo-for-button.svg);
+      height: 1em;
+    }
+
+    a {
+      color: #007bff;
+    }
+
+  API_URL: https://api.coffee-dsw.dckube.scilifelab.se

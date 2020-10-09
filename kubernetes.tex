@@ -80,7 +80,6 @@
     \item Filesystem mount points
     \item ...
    \end{itemize}
-   \item Immutable
   \end{itemize}
  \end{frame}
  
@@ -269,7 +268,12 @@ spec:
    \item Persistent storage
    \item \texttt{PersistentVolume}
    \begin{itemize}
-    \item The storage itself (hd, nfs, ...)
+    \item Storage, e.g. a folder on a hd or nfs
+    \item Global
+   \end{itemize}
+   \item \texttt{StorageClass}
+   \begin{itemize}
+    \item Storage pool
     \item Global
    \end{itemize}
    \item \texttt{PersistentVolumeClaim}
@@ -277,13 +281,12 @@ spec:
     \item The ``claim'' for storage used by the pod.
     \item Namespaced
    \end{itemize}
-   \item Allow setting up ``storage pools'' that are given to pods via claims
   \end{itemize}
  \end{frame}
 
  \begin{frame}{Configuration Variables and Files}
    \begin{itemize}
-    \item \texttt{Environment:}
+    \item \texttt{env:}
     \item ConfigMap
     \item Secret
     \begin{itemize}

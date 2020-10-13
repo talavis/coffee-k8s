@@ -80,6 +80,7 @@
     \item Filesystem mount points
     \item ...
    \end{itemize}
+   \item Docker
   \end{itemize}
  \end{frame}
  
@@ -120,6 +121,7 @@ EXPOSE 80
   \begin{itemize}
    \item \texttt{kubectl}
    \begin{itemize}
+    \item \texttt{kubectl help -f ...}
     \item \texttt{kubectl apply -f ...}
     \item \texttt{kubectl delete -f ...}
     \item \texttt{kubectl get ...}
@@ -140,13 +142,16 @@ EXPOSE 80
 apiVersion: v1
 kind: Pod
 metadata:
-  name: menu-backend
+  name: menu-frontend
+  labels:
+    id: menu-frontend
+
 spec:
   containers:
-  - name: menu-backend
-    image: scilifelabdatacentre/menu-backend:latest
-    ports:
-    - containerPort: 8000
+    - name: menu-frontend
+      image: scilifelabdatacentre/menu-frontend:latest
+      ports:
+        - containerPort: 80
   \end{verbatim}
  \end{frame}
  
@@ -220,8 +225,7 @@ spec:
             name: custom-assets
 
   \end{verbatim}
-    \end{columns}
-
+  \end{columns}
  \end{frame}
  
  \begin{frame}{Namespace}
@@ -313,7 +317,7 @@ spec:
    \item Allow easy access (``DNS'') to groups of pods
    \item Selecting pods using labels
    \item Can be used to expose pods to external access
-   \item Load balancing
+   \item \texttt{ClusterIP}, \texttt{NodePort}, \texttt{LoadBalancer}
   \end{itemize}
  \end{frame}
 
@@ -341,7 +345,7 @@ spec:
    \item Multiple available
    \begin{itemize}
     \item Nginx
-    \item GCE
+    \item Ingress-GCE
     \item AWS ALB Ingress Controller
     \item Traefik
     \item ...
@@ -386,6 +390,16 @@ spec:
   \end{itemize}
  \end{frame}
  
+ \begin{frame}{Other useful things}
+  \begin{itemize}
+   \item Certmanager
+   \item \texttt{readinessProbe}
+   \item \texttt{StatefulSet}
+   \item \texttt{kustomization.yml}
+  \end{itemize}
+ \end{frame}
+
+ 
 \begin{frame}
  \begin{columns}
   \column{0.35\textwidth}
@@ -401,8 +415,8 @@ spec:
   \vspace{20pt}
   
   \begin{tabular}{cl}
-   \includegraphics[height=0.5cm]{img/github.pdf} & \href{https://github.com/talavis}{talavis} \\
-   \includegraphics[height=0.5cm]{img/slack.pdf} & \texttt{@lostb} \\
+   \includegraphics[height=0.35cm]{img/github.pdf} & \href{https://github.com/talavis}{talavis} \\
+   \includegraphics[height=0.35cm]{img/slack.pdf} & \texttt{@lostb} \\
   \end{tabular}
  \end{columns}
  

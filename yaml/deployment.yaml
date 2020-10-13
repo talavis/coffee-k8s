@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: menu-deployment
+spec:
+  selector:
+    matchLabels:
+      name: menu-frontend
+      type: deployment
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        name: menu-frontend
+        type: deployment
+        version: a
+    spec:
+      containers:
+        - name: menu-frontend
+          image: scilifelabdatacentre/menu-frontend:latest
+          resources:
+            limits:
+              cpu: 500m
+              memory: 100Mi
+            requests:
+              cpu: 200m
+              memory: 60Mi
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              scheme: HTTP
+              port: 80

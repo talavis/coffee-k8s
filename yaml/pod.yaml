@@ -5,7 +5,6 @@ metadata:
   name: menu-frontend
   labels:
     id: menu-frontend
-
 spec:
   containers:
     - name: menu-frontend

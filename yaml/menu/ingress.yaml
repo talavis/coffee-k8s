@@ -24,14 +24,3 @@ spec:
             backend:
               serviceName: menu-aggregator
               servicePort: 80
-    - host: menu.talavis.eu
-      http:
-        paths:
-          - path: /api/
-            backend:
-              serviceName: menu-aggregator
-              servicePort: 8000
-          - path: /
-            backend:
-              serviceName: menu-aggregator
-              servicePort: 80

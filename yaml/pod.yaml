@@ -3,6 +3,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: menu-backend
+  labels:
+    id: menu-backend
+
 spec:
   containers:
     - name: menu-backend

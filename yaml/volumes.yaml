@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    name: nextcloud-db-data
+    storage: nextcloud-db-data
+  name: nextcloud-db-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/storage/nextcloud/psql
+    server: 192.168.81.133
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-db-data
+  labels:
+    storage: nextcloud-db-data
+  namespace: lostb
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+    limits:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      storage: nextcloud-db-data
+  storageClassName: ''

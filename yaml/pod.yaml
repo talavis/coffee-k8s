@@ -11,7 +11,7 @@ spec:
     - name: menu-backend
       image: scilifelabdatacentre/menu-backend:latest
       ports:
-        - containerPort: 80
+        - containerPort: 8000
       resources:
         limits:
           cpu: 250m

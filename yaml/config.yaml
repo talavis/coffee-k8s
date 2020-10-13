@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+data:
+  db-host: postgresql-nc
+  admin-user: lostb
+  trusted-domains: nextcloud.dckube.scilifelab.se
+  init.sh: |
+    until ping -c 1 ${HOSTNAME}; do
+      echo "waiting for DNS (${HOSTNAME})..."
+      sleep 2
+    done

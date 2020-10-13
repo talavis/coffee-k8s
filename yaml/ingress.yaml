@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+# apiVersion: networking.k8s.io/v1 on k8s 1.19
+kind: Ingress
+metadata:
+  name: menu-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-issuer"
+spec:
+  tls:
+  - hosts:
+    - coffee.dckube.scilifelab.se
+    secretName: coffee-ingress-tls
+  rules:
+    - host: coffee.dckube.scilifelab.se
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: menu-service
+              servicePort: 80

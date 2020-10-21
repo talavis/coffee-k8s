@@ -21,8 +21,3 @@ spec:
           image: scilifelabdatacentre/menu-frontend:latest
           ports:
             - containerPort: 80
-          readinessProbe:
-            httpGet:
-              path: /
-              scheme: HTTP
-              port: 80

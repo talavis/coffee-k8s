@@ -19,13 +19,6 @@ spec:
       containers:
         - name: menu-frontend
           image: scilifelabdatacentre/menu-frontend:latest
-          resources:
-            limits:
-              cpu: 500m
-              memory: 100Mi
-            requests:
-              cpu: 200m
-              memory: 60Mi
           ports:
             - containerPort: 80
           readinessProbe:

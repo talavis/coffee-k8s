@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dds-db-conf
+  namespace: coffee-dds
+data: 
+  MYSQL_ROOT_PASSWORD: tmpPassword
+  MYSQL_USER: dssdbuser
+  MYSQL_PASSWORD: tmpPassword
+  MYSQL_DATABASE: DeliverySystem

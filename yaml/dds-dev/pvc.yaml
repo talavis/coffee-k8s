@@ -1,0 +1,53 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dds-db-pvc
+  labels:
+    storage: dds-db
+  namespace: coffee-dds
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+    limits:
+      storage: 50Gi
+  storageClassName: 'nfs-client'
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dds-redis-pvc
+  labels:
+    storage: dds-redis
+  namespace: coffee-dds
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 15Gi
+    limits:
+      storage: 15Gi
+  storageClassName: 'nfs-client'
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dds-logs-pvc
+  labels:
+    storage: dds-logs
+  namespace: coffee-dds
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+    limits:
+      storage: 10Gi
+  storageClassName: 'nfs-client'

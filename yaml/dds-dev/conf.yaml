@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dds-conf
+  namespace: coffee-dds
+data:
+  FLASK_ENV: production
+  DDS_APP_CONFIG: "/code/dds_web/sensitive/dds_app.cfg"
+  FLASK_APP: dds_web

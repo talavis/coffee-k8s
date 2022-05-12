@@ -1,2 +1,0 @@
-albert.einstein@example.com
-password

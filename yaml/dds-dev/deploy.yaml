@@ -1,0 +1,83 @@
+---
+# backend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dds-backend
+  labels:
+    name: dds-backend
+    type: dev
+  namespace: coffee-dds
+spec:
+  selector:
+    matchLabels:
+      name: dds-backend
+      type: dev
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: dds-backend
+        type: dev
+        version: dev2
+    spec:
+      containers:
+        - name: dds-backend
+          image: scilifelabdatacentre/dds-backend:dev
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 16000Mi
+            requests:
+              cpu: 2000m
+              memory: 16000Mi
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: logs
+              mountPath: /dds_web/logs
+            - name: conf-file
+              mountPath: /code/dds_web/sensitive/dds_app.cfg
+              subPath: dds_app.cfg
+          env:
+            - name: FLASK_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: dds-conf
+                  key: FLASK_ENV
+            - name: FLASK_APP
+              valueFrom:
+                configMapKeyRef:
+                  name: dds-conf
+                  key: FLASK_APP
+            - name: DDS_APP_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: dds-conf
+                  key: DDS_APP_CONFIG
+      volumes:
+        - name: conf-file
+          secret:
+            secretName: "dds-conf-file"
+        - name: logs
+          persistentVolumeClaim:
+            claimName: dds-logs-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dds-backend
+  labels:
+    name: dds-backend
+    type: dev
+  namespace: coffee-dds
+spec:
+  ports:
+  - name: backend
+    port: 5000
+    targetPort: 5000
+  selector:
+    name: dds-backend
+    type: dev

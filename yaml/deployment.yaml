@@ -9,12 +9,16 @@ spec:
       name: menu-frontend
       type: deployment
   replicas: 10
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 10%
   template:
     metadata:
       labels:
         name: menu-frontend
         type: deployment
-        version: a
+        version: b
     spec:
       containers:
         - name: menu-frontend

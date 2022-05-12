@@ -3,9 +3,9 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   labels:
-    name: nextcloud-db-data
-    storage: nextcloud-db-data
-  name: nextcloud-db-data
+    name: db-data
+    storage: db-data
+  name: coffee-db-data
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,16 +13,16 @@ spec:
     storage: 10Gi
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    path: /mnt/storage/nextcloud/psql
+    path: /mnt/storage/coffee
     server: 192.168.81.133
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nextcloud-db-data
+  name: db-data
   labels:
-    storage: nextcloud-db-data
+    storage: db-data
   namespace: lostb
 spec:
   accessModes:
@@ -34,5 +34,5 @@ spec:
       storage: 10Gi
   selector:
     matchLabels:
-      storage: nextcloud-db-data
+      storage: coffee-db-data
   storageClassName: ''

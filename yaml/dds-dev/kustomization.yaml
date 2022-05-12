@@ -1,0 +1,26 @@
+---
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    type: generated
+  annotations:
+    note: generated
+secretGenerator:
+  - name: db-encryption
+    namespace: coffee-dds
+    files:
+      - conf/db-keys.enc
+      - conf/db-enc.key    
+  - name: dds-conf-file
+    namespace: coffee-dds
+    files:
+      - conf/dds_app.cfg
+configMapGenerator:
+  - name: db-conf-file
+    namespace: coffee-dds
+    files:
+      - conf/db.conf
+  - name: redis-conf
+    namespace: coffee-dds
+    files:
+      - conf/redis.conf

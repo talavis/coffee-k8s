@@ -1,0 +1,86 @@
+---
+# server
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dds-db
+  namespace: coffee-dds
+  labels:
+    name: dds-db
+spec:
+  selector:
+    matchLabels:
+      name: dds-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: dds-db
+    spec:
+      containers:
+        - name: dds-db
+          image: mariadb:10.7.1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+            requests:
+              cpu: 500m
+              memory: 300Mi
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: dds-db-storage
+            - name: db-conf-file
+              mountPath: /etc/mysql/conf.d/encrypt.cnf
+              subPath: db.conf
+            - name: db-encrypt
+              mountPath: /etc/mysql/encrypt
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: dds-db-conf
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: dds-db-conf
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: dds-db-conf
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: dds-db-conf
+                  key: MYSQL_DATABASE
+      volumes:
+        - name: dds-db-storage
+          persistentVolumeClaim:
+            claimName: dds-db-pvc
+        - name: db-conf-file
+          configMap:
+            name: db-conf-file
+        - name: db-encrypt
+          secret:
+            secretName: db-encryption
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dds-db
+  namespace: coffee-dds
+  labels:
+    name: dds-db
+spec:
+  ports:
+  - port: 3306
+    name: dnport
+  clusterIP: None
+  selector:
+    name: dds-db
